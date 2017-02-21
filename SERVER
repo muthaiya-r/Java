@@ -1,28 +1,41 @@
 import java.io.*;
 import java.net.*;
-class Client
+class Server
 {
+	ServerSocket serversoc=null;
 	Socket soc=null;
 	PrintWriter out=null;
 	BufferedReader read=null;
-	Client()
+	Server()
 	{
 		try
 		{
-			soc=new Socket("localhost",4445);
-			read=new BufferedReader(new InputStreamReader(soc.getInputStream()));
-			out=new PrintWriter(soc.getOutputStream(),true);
-			System.out.println(read.readLine());
-			System.out.println("Server says: "+read.readLine());
-			out.println("Hello Server");
+			serversoc=new ServerSocket(4445);
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			System.out.println(e);
+		}
+		while(true)
+		{
+			try
+			{
+				System.out.println("Server is waiting for client");
+				soc=serversoc.accept();
+				read=new BufferedReader(new InputStreamReader(soc.getInputStream()));
+				out=new PrintWriter(soc.getOutputStream(),true);
+				out.println("Connection Accepted");
+				out.println("Hi Client!");
+				System.out.println("Client Says:" +read.readLine());
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+			}
 		}
 	}
 	public static void main(String arg[])
 	{
-		new Client();
+		new Server();
 	}
 }
